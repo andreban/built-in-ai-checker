@@ -1,0 +1,16 @@
+{
+  "name": "prompt-api-checker",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "author": "André Bandarra",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "puppeteer": "^22.10.0",
+    "semver": "^7.6.2",
+    "systeminformation": "^5.22.10"
+  }
+}
