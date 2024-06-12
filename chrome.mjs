@@ -7,7 +7,7 @@ export const RELEASE_CHANNELS = ["stable", "beta", "dev", "canary"];
 
 export function getChromeExecutable(releaseChannel) {
     if (RELEASE_CHANNELS.indexOf(releaseChannel) < 0) {
-        throw new Error('Unknown release channlel', channel);
+        throw new Error('Unknown release channel', channel);
     }
     const platform = os.platform();
     switch (platform) {
@@ -29,7 +29,7 @@ export function getChromeExecutable(releaseChannel) {
             }            
         }
         case 'linux': {
-            switch (channel) {
+            switch (releaseChannel) {
                 case 'stable': return '/opt/google/chrome/chrome';
                 case 'beta': return '/opt/google/chrome-beta/chrome';
                 case 'dev': return '/opt/google/chrome-unstable/chrome';
@@ -41,7 +41,7 @@ export function getChromeExecutable(releaseChannel) {
 
 export function getChromeVersion(path) {
     const versionString = execFileSync(path, ['--version'], {stdio: 'pipe', encoding: 'utf8'});
-    const match = versionString.match(/(\d+).(\d+).(\d+).(\d+)/);
+    const match = versionString.match(/(\d+)\.(\d+)\.(\d+)\.(\d+)/);
     if (!match) {
         throw new Error("Unable to find version string");
     }
@@ -91,6 +91,23 @@ export function getFlags(channel) {
             }    
             break;        
         }
+        case 'linux': {
+            switch (channel) {
+                case 'stable': {
+                    localStateFilePath = `${home}/.config/google-chrome/Local\ State`;
+                    break;
+                }
+                case 'beta': {
+                    localStateFilePath = `${home}/.config/google-chrome-beta/Local\ State`;
+                    break;
+                }
+                case 'dev': {
+                    localStateFilePath = `${home}/.config/google-chrome-unstable/Local\ State`;
+                    break;
+                }
+            }
+            break;
+        }
         default: throw new Error('Unsupported OS :(');
     }
 
@@ -100,5 +117,5 @@ export function getFlags(channel) {
 
     const localStateFileContent = fs.readFileSync(localStateFilePath, {encoding: 'utf-8'});
     const localStateJson = JSON.parse(localStateFileContent);
-    return localStateJson.browser['enabled_labs_experiments'];
+    return localStateJson.browser['enabled_labs_experiments'] || [];
 }
