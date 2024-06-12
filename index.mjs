@@ -39,7 +39,7 @@ const diskSpaceOk = fileSystems.find(fs => fs.available >= MIN_AVAILABLE_DISK_SP
 console.log(`Disk Space => ${diskSpaceOk}`);
 
 console.log('\n\nBrowser Checks\n==============\n')
-for (let chrome of findChromes()) {
+for (let chrome of chromes) {
     console.log(`Channel: ${chrome.channel}; version: ${chrome.version.join('.')}; supported: ${chrome.versionOk}`)
     const flags = getFlags(chrome.channel);
 
@@ -75,5 +75,5 @@ function checkMinOsVersion() {
 }
 
 function checkAvailableVram(controller) {
-    return graphics.controllers.find(graphics => controller.vramDynamic || controller.vram >= MIN_AVAILABLE_VRAM) !== undefined;
+    return controller.vramDynamic || controller.vram >= MIN_AVAILABLE_VRAM;
 }

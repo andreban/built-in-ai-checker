@@ -65,51 +65,34 @@ export function gteVersion(v1, v2) {
     return true;
 }
 
-export function getFlags(channel) {
+function getChromeHome(channel) {
     const platform = os.platform();
     const home = os.homedir();
-    let localStateFilePath;
+    
     switch (platform) {
         case 'darwin': {
             switch (channel) {
-                case 'stable': {
-                    localStateFilePath = `${home}/Library/Application\ Support/Google/Chrome/Local State`;
-                    break;
-                }
-                case 'beta': {
-                    localStateFilePath = `${home}/Library/Application\ Support/Google/Chrome Beta/Local State`;
-                    break;                    
-                }
-                case 'dev': {
-                    localStateFilePath = `${home}/Library/Application\ Support/Google/Chrome Dev/Local State`;
-                    break;                    
-                }
-                case 'canary': {
-                    localStateFilePath = `${home}/Library/Application\ Support/Google/Chrome Canary/Local State`;
-                    break;                    
-                }
-            }    
-            break;        
+                case 'stable': return `${home}/Library/Application\ Support/Google/Chrome`;
+                case 'beta': return `${home}/Library/Application\ Support/Google/Chrome Beta`;
+                case 'dev': return `${home}/Library/Application\ Support/Google/Chrome Dev`;
+                case 'canary': return `${home}/Library/Application\ Support/Google/Chrome Canary`;
+            }
         }
         case 'linux': {
             switch (channel) {
-                case 'stable': {
-                    localStateFilePath = `${home}/.config/google-chrome/Local\ State`;
-                    break;
-                }
-                case 'beta': {
-                    localStateFilePath = `${home}/.config/google-chrome-beta/Local\ State`;
-                    break;
-                }
-                case 'dev': {
-                    localStateFilePath = `${home}/.config/google-chrome-unstable/Local\ State`;
-                    break;
-                }
+                case 'stable': return `${home}/.config/google-chrome`;
+                case 'beta': return `${home}/.config/google-chrome-beta`;
+                case 'dev': `${home}/.config/google-chrome-unstable`;
             }
-            break;
         }
-        default: throw new Error('Unsupported OS :(');
+        // TODO - Windows
     }
+
+    return null;
+}
+export function getFlags(channel) {
+    const chromeHome = getChromeHome(channel);
+    const localStateFilePath = chromeHome + '/Local State';
 
     if (!fs.existsSync(localStateFilePath)) {
         throw new Error('Unable to find flags file ' + localStateFilePath);
