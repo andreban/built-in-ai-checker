@@ -82,7 +82,7 @@ function getChromeHome(channel) {
             switch (channel) {
                 case 'stable': return `${home}/.config/google-chrome`;
                 case 'beta': return `${home}/.config/google-chrome-beta`;
-                case 'dev': `${home}/.config/google-chrome-unstable`;
+                case 'dev': return `${home}/.config/google-chrome-unstable`;
             }
         }
         // TODO - Windows
