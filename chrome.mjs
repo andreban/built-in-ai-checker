@@ -1,6 +1,7 @@
 import { channel } from 'diagnostics_channel';
 import * as os from 'os';
 import { execFileSync } from 'child_process';
+import * as fs from 'fs';
 
 export const RELEASE_CHANNELS = ["stable", "beta", "dev", "canary"];
 
@@ -62,4 +63,42 @@ export function gteVersion(v1, v2) {
     }
     // All numbers are the same, return true.
     return true;
+}
+
+export function getFlags(channel) {
+    const platform = os.platform();
+    const home = os.homedir();
+    let localStateFilePath;
+    switch (platform) {
+        case 'darwin': {
+            switch (channel) {
+                case 'stable': {
+                    localStateFilePath = `${home}/Library/Application\ Support/Google/Chrome/Local State`;
+                    break;
+                }
+                case 'beta': {
+                    localStateFilePath = `${home}/Library/Application\ Support/Google/Chrome Beta/Local State`;
+                    break;                    
+                }
+                case 'dev': {
+                    localStateFilePath = `${home}/Library/Application\ Support/Google/Chrome Dev/Local State`;
+                    break;                    
+                }
+                case 'canary': {
+                    localStateFilePath = `${home}/Library/Application\ Support/Google/Chrome Canary/Local State`;
+                    break;                    
+                }
+            }    
+            break;        
+        }
+        default: throw new Error('Unsupported OS :(');
+    }
+
+    if (!fs.existsSync(localStateFilePath)) {
+        throw new Error('Unable to find flags file ' + localStateFilePath);
+    }
+
+    const localStateFileContent = fs.readFileSync(localStateFilePath, {encoding: 'utf-8'});
+    const localStateJson = JSON.parse(localStateFileContent);
+    return localStateJson.browser['enabled_labs_experiments'];
 }

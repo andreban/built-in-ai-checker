@@ -1,4 +1,4 @@
-import { getChromeExecutable, getChromeVersion, gteVersion } from './chrome.mjs';
+import { getChromeExecutable, getChromeVersion, getFlags, gteVersion } from './chrome.mjs';
 import * as fs from 'fs';
 import * as si from 'systeminformation';
 import * as semver from 'semver';
@@ -9,6 +9,8 @@ const MIN_AVAILABLE_VRAM = 4 * ONE_GIGABYTE; // 4GB.
 const MIN_MACOS_VERSION = "13.0.0";
 const MIN_WINDOWS_VERSION = "10.0.0"; 
 const MIN_CHROME_VERSION = [127, 0, 6512, 0];
+const FLAG_OPTIMIZATION_GUIDE_ON_DEVICE_MODEL = 'optimization-guide-on-device-model@2';
+const FLAG_PROMPT_API_FOR_GEMINI_NANO = 'prompt-api-for-gemini-nano@1';
 
 const os = await si.osInfo();
 const graphics = await si.graphics();
@@ -39,6 +41,14 @@ console.log(`Disk Space => ${diskSpaceOk}`);
 console.log('\n\nBrowser Checks\n==============\n')
 for (let chrome of findChromes()) {
     console.log(`Channel: ${chrome.channel}; version: ${chrome.version.join('.')}; supported: ${chrome.versionOk}`)
+    const flags = getFlags(chrome.channel);
+
+    const optimizationGuideOk = flags.indexOf(FLAG_OPTIMIZATION_GUIDE_ON_DEVICE_MODEL) >= 0;
+    console.log("\tFlag optimization-guide-on-device-model set to Enabled BypassPerRequirement ", optimizationGuideOk);
+
+    const promptApiOk = flags.indexOf(FLAG_PROMPT_API_FOR_GEMINI_NANO) >= 0;
+    console.log("\tFlag prompt-api-for-gemini-nano set to Enabled ", promptApiOk);
+
 }
 
 function findChromes() {
