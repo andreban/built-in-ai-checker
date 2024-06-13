@@ -5,7 +5,7 @@ import * as semver from 'semver';
 
 const ONE_GIGABYTE = 1024 * 1024 * 1024;
 const MIN_AVAILABLE_DISK_SPACE = 22 * ONE_GIGABYTE; // 22 GB.
-const MIN_AVAILABLE_VRAM = 4 * ONE_GIGABYTE; // 4GB.
+const MIN_AVAILABLE_VRAM = 4096; // VRAM is reported in megabytes.
 const MIN_MACOS_VERSION = "13.0.0";
 const MIN_WINDOWS_VERSION = "10.0.0"; 
 const MIN_CHROME_VERSION = [127, 0, 6512, 0];

@@ -3,6 +3,9 @@ import * as os from 'os';
 import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 
+// Chrome's user profile directory base path on Windows.
+const ENV_LOCAL_APP_DATA = 'LOCALAPPDATA';
+
 export const RELEASE_CHANNELS = ["stable", "beta", "dev", "canary"];
 
 export function getChromeExecutable(releaseChannel) {
@@ -40,7 +43,14 @@ export function getChromeExecutable(releaseChannel) {
 }
 
 export function getChromeVersion(path) {
-    const versionString = execFileSync(path, ['--version'], {stdio: 'pipe', encoding: 'utf8'});
+    let versionString;
+    // On Windows, chrome.exe does not have a --version flag, and instead launches the browser.
+    if (os.platform() === 'win32') {
+        versionString = execFileSync('powershell.exe', [`(Get-Item "${path}").VersionInfo`], {stdio: 'pipe', encoding: 'utf8'});
+    } else {
+        versionString = execFileSync(path, ['--version'], {stdio: 'pipe', encoding: 'utf8'});
+    }    
+
     const match = versionString.match(/(\d+)\.(\d+)\.(\d+)\.(\d+)/);
     if (!match) {
         throw new Error("Unable to find version string");
@@ -78,6 +88,15 @@ function getChromeHome(channel) {
                 case 'canary': return `${home}/Library/Application\ Support/Google/Chrome Canary`;
             }
         }
+        case 'win32': {
+            const localAppData = process.env[ENV_LOCAL_APP_DATA];
+            switch (channel) {
+                case 'stable': return `${localAppData}\\Google\\Chrome\\User Data`;
+                case 'beta': return `${localAppData}\\Google\\Chrome Beta\\User Data`;
+                case 'dev': return `${localAppData}\\Google\\Chrome Dev\\User Data`;
+                case 'canary': return `${localAppData}\\Google\\Chrome SxS\\User Data`;
+            }
+        }
         case 'linux': {
             switch (channel) {
                 case 'stable': return `${home}/.config/google-chrome`;
@@ -85,7 +104,6 @@ function getChromeHome(channel) {
                 case 'dev': return `${home}/.config/google-chrome-unstable`;
             }
         }
-        // TODO - Windows
     }
 
     return null;
