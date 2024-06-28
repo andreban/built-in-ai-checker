@@ -5,6 +5,7 @@ import * as fs from 'fs';
 
 // Chrome's user profile directory base path on Windows.
 const ENV_LOCAL_APP_DATA = 'LOCALAPPDATA';
+const ENV_PROGRAM_FILES = 'PROGRAMFILES';
 
 export const RELEASE_CHANNELS = ["stable", "beta", "dev", "canary"];
 
@@ -16,26 +17,39 @@ export function getChromeExecutable(releaseChannel) {
     switch (platform) {
         case 'darwin': {
             switch (releaseChannel) {
-                case 'stable': return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-                case 'beta': return '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta';
-                case 'dev': return '/Applications/Google Chrome Dev.app/Contents/MacOS/Google Chrome Dev';
-                case 'canary': return '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary';
+                case 'stable': return ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'];
+                case 'beta': return ['/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta'];
+                case 'dev': return ['/Applications/Google Chrome Dev.app/Contents/MacOS/Google Chrome Dev'];
+                case 'canary': return ['/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary'];
             }
         }
         case 'win32': {
-            const baseDirectory = process.env['PROGRAMFILES'];
+            const localAppData = process.env[ENV_LOCAL_APP_DATA];
+            const baseDirectory = process.env[ENV_PROGRAM_FILES];
             switch (releaseChannel) {
-                case 'stable': return `${baseDirectory}\\Google\\Chrome\\Application\\chrome.exe`;
-                case 'beta': return `${baseDirectory}\\Google\\Chrome Beta\\Application\\chrome.exe`;
-                case 'dev': return `${baseDirectory}\\Google\\Chrome SxS\\Application\\chrome.exe`;
-                case 'canary': return `${baseDirectory}\\Google\\Chrome Dev\\Application\\chrome.exe`;
+                case 'stable': return [
+                    `${baseDirectory}\\Google\\Chrome\\Application\\chrome.exe`,
+                    `${localAppData}\\Google\\Chrome\\Application\\chrome.exe`,
+                ];
+                case 'beta': return [
+                    `${baseDirectory}\\Google\\Chrome Beta\\Application\\chrome.exe`,
+                    `${localAppData}\\Google\\Chrome Beta\\Application\\chrome.exe`,
+                ];
+                case 'dev': return [
+                    `${baseDirectory}\\Google\\Chrome Dev\\Application\\chrome.exe`,
+                    `${localAppData}\\Google\\Chrome Dev\\Application\\chrome.exe`,
+                ];
+                case 'canary': return [
+                    `${baseDirectory}\\Google\\Chrome SxS\\Application\\chrome.exe`,
+                    `${localAppData}\\Google\\Chrome SxS\\Application\\chrome.exe`,
+                ];
             }            
         }
         case 'linux': {
             switch (releaseChannel) {
-                case 'stable': return '/opt/google/chrome/chrome';
-                case 'beta': return '/opt/google/chrome-beta/chrome';
-                case 'dev': return '/opt/google/chrome-unstable/chrome';
+                case 'stable': return ['/opt/google/chrome/chrome'];
+                case 'beta': return ['/opt/google/chrome-beta/chrome'];
+                case 'dev': return ['/opt/google/chrome-unstable/chrome'];
             }            
         }
         default: return null;

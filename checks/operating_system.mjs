@@ -22,7 +22,7 @@ export function checkOperatingSystem(os) {
 }
 
 function checkOsPlatform(os) {
-    const result =  ['darwin', 'windows', 'linux'].indexOf(os.platform) >= 0;
+    const result =  ['darwin', 'Windows', 'linux'].indexOf(os.platform) >= 0;
     const message = result ?
         `${'[✓]'.green} Operating System is ${os.platform}` :
         `${'[✗]'.red} OSs darwin (MacOS), windows and linux are supported but found ${os.platform}`;
@@ -35,6 +35,7 @@ function checkOsPlatform(os) {
 
 function checkMinOsVersion(os) {
     let osVersionResult = false;
+    let minVersion;
     switch (os.platform) {
         case 'linux':  {
             osVersionResult = true;
@@ -43,11 +44,13 @@ function checkMinOsVersion(os) {
            
         case 'darwin': {
             osVersionResult = semver.gte(semver.coerce(os.release), MIN_MACOS_VERSION);
+            minVersion = MIN_MACOS_VERSION;
             break;
         }
 
-        case 'windows': {
+        case 'Windows': {
             osVersionResult = semver.gte(semver.coerce(os.release), MIN_WINDOWS_VERSION);
+            minVersion = MIN_MACOS_VERSION;
             break;
         }
         default: {

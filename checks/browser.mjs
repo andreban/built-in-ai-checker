@@ -17,19 +17,18 @@ const FLAG_PROMPT_API_FOR_GEMINI_NANO = {
 };
 
 export function checkBrowser(channel) {
-    const executablePath = getChromeExecutable(channel);
-
-    // This Chrome channel is not installed.
-    if (!fs.existsSync(executablePath)) {
+    const executablePaths = getChromeExecutable(channel).filter(fs.existsSync);
+    if (executablePaths.length == 0) {
         let message = `Chrome ${channel}: ${'NOT_FOUND'.gray}`;
         return {
             id: `browser/${channel}`,
             result: false,
             message: message,
             details: [],
-        }        
+        }          
     }
 
+    const executablePath = executablePaths[0];
     const channelResult = checkChannel(channel);
     const browserVersionResult = checkBrowserVersion(channel, executablePath);
     const flagOptimizationGuideResult = checkBrowserFlag(channel, FLAG_OPTIMIZATION_GUIDE_ON_DEVICE_MODEL);
