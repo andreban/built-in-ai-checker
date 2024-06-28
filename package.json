@@ -9,6 +9,7 @@
   "author": "André Bandarra",
   "license": "Apache-2.0",
   "dependencies": {
+    "colors": "^1.4.0",
     "semver": "^7.6.2",
     "systeminformation": "^5.22.10"
   }

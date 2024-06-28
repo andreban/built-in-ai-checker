@@ -75,7 +75,7 @@ export function gteVersion(v1, v2) {
     return true;
 }
 
-function getChromeHome(channel) {
+export function getChromeHome(channel) {
     const platform = os.platform();
     const home = os.homedir();
     
