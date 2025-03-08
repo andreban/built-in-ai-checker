@@ -11,6 +11,6 @@
   "dependencies": {
     "colors": "^1.4.0",
     "semver": "^7.6.2",
-    "systeminformation": "^5.22.10"
+    "systeminformation": "^5.23.8"
   }
 }
